@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phishing Simulation Trainer — PVFSE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:    #0d1b2a;
+  --navy2:   #1a2f45;
+  --teal:    #028090;
+  --teal-lt: #e0f4f6;
+  --coral:   #c45e3e;
+  --coral-lt:#faeee9;
+  --amber:   #c48a3e;
+  --amber-lt:#faf3e0;
+  --green:   #2d7d46;
+  --green-lt:#e4f5ea;
+  --white:   #ffffff;
+  --offwh:   #f7f8fa;
+  --border:  #e2e6eb;
+  --text:    #1a1f2e;
+  --muted:   #6b7280;
+  --light:   #9ca3af;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--offwh);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ── LAYOUT ─────────────────────────────────────── */
+.shell {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 1.25rem 4rem;
+}
+
+/* ── TOP BAR ─────────────────────────────────────── */
+.topbar {
+  background: var(--navy);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+.topbar-logo span { color: var(--teal); }
+.topbar-meta {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ── SCREEN SYSTEM ─────────────────────────────── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── INTRO ──────────────────────────────────────── */
+.intro-wrap { padding: 3rem 0 0; }
+
+.hero-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal);
+  background: var(--teal-lt);
+  padding: 4px 12px;
+  border-radius: 100px;
+  margin-bottom: 1.25rem;
+}
+
+.hero-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.6rem;
+  line-height: 1.15;
+  color: var(--navy);
+  margin-bottom: 1rem;
+  letter-spacing: -0.01em;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--teal);
+}
+
+.hero-body {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 540px;
+  margin-bottom: 2rem;
+  line-height: 1.75;
+}
+
+.stat-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 2.5rem;
+}
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+}
+.stat-card .num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.6rem;
+  color: var(--navy);
+  display: block;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-card .lbl {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.framework-box {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+.framework-box h3 {
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+.layer-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.layer-pill {
+  border-radius: 8px;
+  padding: 0.6rem 0.5rem;
+  text-align: center;
+}
+.layer-pill .ln {
+  font-size: 0.65rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: block;
+  margin-bottom: 3px;
+}
+.layer-pill .lt {
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.3;
+  display: block;
+}
+.lp1 { background: var(--coral-lt); }
+.lp1 .ln, .lp1 .lt { color: var(--coral); }
+.lp2 { background: #eeedfe; }
+.lp2 .ln, .lp2 .lt { color: #3c3489; }
+.lp3 { background: var(--amber-lt); }
+.lp3 .ln, .lp3 .lt { color: var(--amber); }
+.lp4 { background: var(--green-lt); }
+.lp4 .ln, .lp4 .lt { color: var(--green); }
+
+.clickable-layer {
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  border: 1.5px solid transparent;
+}
+.clickable-layer:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.clickable-layer.active-layer { border-color: currentColor; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.ld-tag {
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 100px;
+  border: 1px solid;
+  cursor: default;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+.start-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 100px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  margin-bottom: 0.75rem;
+}
+.start-btn:hover { background: var(--navy2); transform: translateY(-1px); }
+.start-btn svg { transition: transform 0.2s; }
+.start-btn:hover svg { transform: translateX(3px); }
+
+.start-note {
+  font-size: 0.8rem;
+  color: var(--light);
+}
+
+/* ── SIM ─────────────────────────────────────────── */
+.sim-wrap { padding: 2rem 0 0; }
+
+.progress-wrap {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.progress-left { flex: 1; }
+.progress-counter {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.prog-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.prog-fill {
+  height: 4px;
+  background: var(--teal);
+  border-radius: 4px;
+  transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.score-display {
+  text-align: right;
+  flex-shrink: 0;
+}
+.score-display .snum {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.8rem;
+  color: var(--navy);
+  line-height: 1;
+}
+.score-display .slbl {
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* EMAIL CLIENT */
+.email-client {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+.client-bar {
+  background: var(--navy);
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.client-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+.client-bar-title {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  margin-left: 4px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.inbox-sidebar {
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fafbfc;
+}
+.unread-badge {
+  background: var(--coral);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 100px;
+}
+.inbox-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.email-meta {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: #fafbfc;
+}
+.email-meta-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+}
+.meta-key {
+  color: var(--light);
+  width: 36px;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+}
+.meta-val { color: var(--text); font-weight: 500; }
+.meta-addr { color: var(--muted); font-weight: 400; font-size: 0.8rem; }
+.email-subject-line {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.15rem;
+  color: var(--navy);
+  margin-top: 8px;
+}
+.email-body-text {
+  padding: 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+.email-link-span {
+  color: var(--teal);
+  text-decoration: underline;
+  cursor: default;
+  font-weight: 500;
+}
+
+/* DECISION BUTTONS */
+.decision-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 1.25rem;
+}
+.dec-btn {
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.dec-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.dec-legit { color: var(--green); border-color: #9fd8b2; }
+.dec-legit:hover { background: var(--green-lt); }
+.dec-phish { color: var(--coral); border-color: #f0b4a0; }
+.dec-phish:hover { background: var(--coral-lt); }
+
+/* FEEDBACK */
+.feedback-card {
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+.feedback-card.correct { border-color: #9fd8b2; background: #f7fdf9; }
+.feedback-card.wrong { border-color: #f0b4a0; background: #fdf7f5; }
+
+.verdict-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+.verdict-icon {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.vi-correct { background: var(--green-lt); color: var(--green); }
+.vi-wrong { background: var(--coral-lt); color: var(--coral); }
+.verdict-text {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+.vt-correct { color: var(--green); }
+.vt-wrong { color: var(--coral); }
+
+.feedback-explanation {
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+
+.tag-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 1rem;
+}
+.tag {
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 100px;
+  border: 1px solid;
+}
+.tag-tr { background: var(--coral-lt); color: var(--coral); border-color: #f0b4a0; }
+.tag-bi { background: #eeedfe; color: #3c3489; border-color: #c9c6f2; }
+.tag-la { background: var(--teal-lt); color: var(--teal); border-color: #b0dde3; }
+
+.clue-section {
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+}
+.clue-title {
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 0.6rem;
+}
+.clue-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.84rem;
+  color: var(--text);
+  margin-bottom: 5px;
+  line-height: 1.5;
+}
+.clue-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--teal);
+  margin-top: 7px;
+  flex-shrink: 0;
+}
+
+.next-btn {
+  width: 100%;
+  padding: 0.9rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--navy);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.next-btn:hover { background: var(--navy2); transform: translateY(-1px); }
+
+/* ── RESULTS ─────────────────────────────────────── */
+.results-wrap { padding: 2.5rem 0 0; }
+
+.results-hero {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.score-ring-wrap {
+  width: 120px; height: 120px;
+  margin: 0 auto 1.25rem;
+  position: relative;
+}
+.score-ring-wrap svg { transform: rotate(-90deg); }
+.score-ring-num {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+  color: var(--navy);
+  line-height: 1;
+}
+.results-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.6rem;
+  color: var(--navy);
+  margin-bottom: 0.35rem;
+}
+.results-sub {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.results-section {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.results-section-title {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+}
+
+.bias-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.bias-name {
+  font-size: 0.82rem;
+  color: var(--text);
+  width: 185px;
+  flex-shrink: 0;
+  line-height: 1.3;
+}
+.bias-bar-bg {
+  flex: 1;
+  height: 6px;
+  background: var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.bias-bar-fill {
+  height: 6px;
+  border-radius: 6px;
+  transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+}
+.bias-stat {
+  font-size: 0.78rem;
+  color: var(--muted);
+  width: 55px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.key-finding {
+  border-left: 3px solid var(--teal);
+  padding-left: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 0.25rem;
+}
+.key-finding-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--teal);
+  margin-bottom: 6px;
+}
+.key-finding-text {
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.review-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.review-item:last-child { border-bottom: none; }
+.ri-icon {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.ri-c { background: var(--green-lt); color: var(--green); }
+.ri-w { background: var(--coral-lt); color: var(--coral); }
+.ri-subject {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.ri-meta { font-size: 0.78rem; color: var(--muted); }
+
+.restart-btn {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 100px;
+  border: none;
+  background: var(--navy);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s, transform 0.15s;
+}
+.restart-btn:hover { background: var(--navy2); transform: translateY(-1px); }
+
+/* ── RESPONSIVE ──────────────────────────────────── */
+@media (max-width: 600px) {
+  .hero-title { font-size: 1.9rem; }
+  .stat-strip { grid-template-columns: repeat(2, 1fr); }
+  .layer-row { grid-template-columns: repeat(2, 1fr); }
+  .decision-grid { grid-template-columns: 1fr; }
+  .bias-name { width: 130px; font-size: 0.75rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">Phish<span>Trainer</span></div>
+
+</div>
+
+<div class="shell">
+
+  <!-- ══════════ INTRO ══════════ -->
+  <div id="screen-intro" class="screen active">
+    <div class="intro-wrap">
+      <div class="hero-tag">Interactive security awareness tool</div>
+      <h1 class="hero-title">Can you spot<br><em>the attack?</em></h1>
+      <p class="hero-body">8 realistic emails — some legitimate, some phishing. For each one, decide whether it is safe or an attack. You will learn exactly which psychological trigger was used, which cognitive bias it exploited, and how to protect yourself.</p>
+
+      <div class="stat-strip">
+        <div class="stat-card"><span class="num">68%</span><span class="lbl">of breaches involve humans</span></div>
+        <div class="stat-card"><span class="num">8</span><span class="lbl">real scenarios</span></div>
+        <div class="stat-card"><span class="num">5min</span><span class="lbl">to complete</span></div>
+        <div class="stat-card"><span class="num">4</span><span class="lbl">PVFSE layers</span></div>
+      </div>
+
+      <div class="framework-box" id="pvfse-explorer">
+        <h3>Based on the PVFSE — click any layer to explore it</h3>
+        <div class="layer-row">
+          <div class="layer-pill lp1 clickable-layer" onclick="showLayer(1)" id="lp-1"><span class="ln">Layer 1</span><span class="lt">Attacker techniques</span></div>
+          <div class="layer-pill lp2 clickable-layer" onclick="showLayer(2)" id="lp-2"><span class="ln">Layer 2</span><span class="lt">Cognitive biases</span></div>
+          <div class="layer-pill lp3 clickable-layer" onclick="showLayer(3)" id="lp-3"><span class="ln">Layer 3</span><span class="lt">Susceptibility outcomes</span></div>
+          <div class="layer-pill lp4 clickable-layer" onclick="showLayer(4)" id="lp-4"><span class="ln">Layer 4</span><span class="lt">Mitigations</span></div>
+        </div>
+        <div id="layer-detail" style="display:none;margin-top:1rem;padding:1rem;border-radius:10px;border:1px solid var(--border);background:var(--offwh);animation:fadeUp 0.25s ease">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem">
+            <span id="ld-title" style="font-weight:500;font-size:0.9rem;color:var(--navy)"></span>
+            <button onclick="closeLayer()" style="background:none;border:none;cursor:pointer;font-size:1rem;color:var(--muted)">✕</button>
+          </div>
+          <p id="ld-body" style="font-size:0.85rem;color:var(--text);line-height:1.7;margin-bottom:0.75rem"></p>
+          <div id="ld-items" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+        </div>
+      </div>
+
+      <button class="start-btn" onclick="startSim()">
+        Start simulation
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="start-note">No sign-up required · runs entirely in your browser · emails randomised each round</div>
+    </div>
+  </div>
+
+  <!-- ══════════ SIM ══════════ -->
+  <div id="screen-sim" class="screen">
+    <div class="sim-wrap">
+      <div class="progress-wrap">
+        <div class="progress-left">
+          <div class="progress-counter" id="progress-counter">Email 1 of 8</div>
+          <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+        </div>
+        <div class="score-display">
+          <div class="snum" id="score-num">0</div>
+          <div class="slbl">correct</div>
+        </div>
+      </div>
+
+      <div class="email-client">
+        <div class="client-bar">
+          <div class="client-dot" style="background:#e24b4a"></div>
+          <div class="client-dot" style="background:#c48a3e;margin-left:4px"></div>
+          <div class="client-dot" style="background:#2d7d46;margin-left:4px"></div>
+          <span class="client-bar-title">Inbox — Simulation Mode</span>
+        </div>
+        <div class="inbox-sidebar">
+          <span class="inbox-label">Inbox</span>
+          <span class="unread-badge" id="unread-count">1 unread</span>
+        </div>
+        <div class="email-meta">
+          <div class="email-meta-row"><span class="meta-key">From</span><span class="meta-val" id="em-from"></span></div>
+          <div class="email-meta-row"><span class="meta-key">To</span><span class="meta-addr">you@example.com</span></div>
+          <div class="email-subject-line" id="em-subject"></div>
+        </div>
+        <div class="email-body-text" id="em-body"></div>
+      </div>
+
+      <div class="decision-grid" id="decision-grid">
+        <button class="dec-btn dec-legit" onclick="answer(false)">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="#2d7d46" stroke-width="1.2"/><path d="M5 8l2 2 4-4" stroke="#2d7d46" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Legitimate email
+        </button>
+        <button class="dec-btn dec-phish" onclick="answer(true)">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2L14.5 13.5H1.5L8 2Z" stroke="#c45e3e" stroke-width="1.2" stroke-linejoin="round"/><path d="M8 6.5v3M8 11.5v.5" stroke="#c45e3e" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Phishing attack
+        </button>
+      </div>
+
+      <div id="feedback-area" style="display:none">
+        <div class="feedback-card" id="feedback-card">
+          <div class="verdict-row">
+            <div class="verdict-icon" id="vi"></div>
+            <div class="verdict-text" id="vt"></div>
+          </div>
+          <p class="feedback-explanation" id="fb-expl"></p>
+          <div class="tag-strip" id="tag-strip"></div>
+          <div class="clue-section" id="clue-section">
+            <div class="clue-title">Detection clues</div>
+            <div id="clue-list"></div>
+          </div>
+        </div>
+        <button class="next-btn" id="next-btn" onclick="nextEmail()">
+          <span id="next-btn-label">Next email</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ RESULTS ══════════ -->
+  <div id="screen-results" class="screen">
+    <div class="results-wrap">
+      <div class="results-hero">
+        <div class="score-ring-wrap">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#e2e6eb" stroke-width="8"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#028090" stroke-width="8" stroke-linecap="round"
+              stroke-dasharray="314" id="ring-fill" stroke-dashoffset="314"/>
+          </svg>
+          <div class="score-ring-num" id="ring-num">0</div>
+        </div>
+        <div class="results-title" id="results-title">Loading...</div>
+        <div class="results-sub" id="results-sub"></div>
+      </div>
+
+      <div class="results-section">
+        <div class="results-section-title">Your vulnerability profile</div>
+        <div id="bias-breakdown"></div>
+        <div class="key-finding" id="key-finding" style="display:none">
+          <div class="key-finding-label">Key finding</div>
+          <div class="key-finding-text" id="kf-text"></div>
+        </div>
+      </div>
+
+      <div class="results-section">
+        <div class="results-section-title">Round review</div>
+        <div id="review-list"></div>
+      </div>
+
+      <button class="restart-btn" onclick="restart()">Try again</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const emails = [
+  {
+    from:"Netflix <no-reply@netflix.com>",
+    subject:"Your payment was declined — update your details",
+    body:`Dear customer,
+
+We were unable to process your most recent payment. Your account will be suspended in 48 hours unless you update your billing information.
+
+Please update your payment details immediately:
+
+[Update billing details — secure.netflix-billing-update.com]
+
+Netflix Support Team`,
+    isPhishing:true,
+    trigger:"Urgency / fear",
+    bias:"System 1 dominance",
+    layer:"PVFSE Layer 1 + Layer 2",
+    explanation:"This email exploits urgency (48-hour suspension threat) to activate System 1 processing, bypassing the deliberative analysis where you would notice the suspicious domain 'netflix-billing-update.com' rather than netflix.com. Real Netflix emails always use the netflix.com domain and address you by name.",
+    clues:["Suspicious domain: 'netflix-billing-update.com' — not netflix.com","Vague greeting 'Dear customer' — Netflix always uses your name","48-hour suspension threat is a classic urgency trigger designed to prevent rational evaluation","No account-specific information to verify the email is genuine"]
+  },
+  {
+    from:"MMU Payroll <payroll@manchestermetropol.ac.uk>",
+    subject:"Action required: verify your bank details for May payroll",
+    body:`Dear colleague,
+
+As part of our annual payroll verification process, all staff are required to confirm their bank account details before 5pm today to ensure payment is not delayed.
+
+Please reply to this email with your:
+— Sort code
+— Account number
+— Full name as it appears on your account
+
+This is a mandatory requirement from the Finance department.
+
+MMU Payroll Team`,
+    isPhishing:true,
+    trigger:"Authority + urgency",
+    bias:"Authority bias + System 1 dominance",
+    layer:"PVFSE Layer 1 + Layer 2",
+    explanation:"This attack combines two powerful Cialdini principles: authority (Finance department, institutional email) and urgency (5pm today). Look closely at the domain — 'manchestermetropol.ac.uk' is missing letters from 'manchestermetropolitan.ac.uk'. Legitimate payroll departments never request bank details by email reply.",
+    clues:["Domain typo: 'manchestermetropol' — missing 'itan' from 'metropolitan'","No legitimate payroll process requests bank details via email reply","Combines authority (Finance dept) + urgency (5pm deadline) for maximum pressure","Asks for sensitive financial information with no verification process"]
+  },
+  {
+    from:"Amazon <noreply@amazon.co.uk>",
+    subject:"Your order #204-7362819-5530721 has been dispatched",
+    body:`Hello,
+
+Your order has been dispatched and is on its way.
+
+Order #204-7362819-5530721
+Item: USB-C Hub (4-port)
+Estimated delivery: Thursday 3 May
+
+You can track your parcel at:
+amazon.co.uk/track
+
+Thank you for shopping with Amazon.`,
+    isPhishing:false,
+    trigger:"None — legitimate email",
+    bias:"N/A",
+    layer:"N/A",
+    explanation:"This is a legitimate Amazon dispatch notification. It uses the correct amazon.co.uk domain, contains a real order number with specific item details, links only to amazon.co.uk, creates no urgency, and requests no personal information. Notice how it lacks all the psychological pressure tactics present in the phishing emails.",
+    clues:["Correct domain: amazon.co.uk throughout","Contains specific order number and product details — not vague","All links go to amazon.co.uk — no third-party redirects","No urgency, threats, or requests for personal information","Confirmation of a real transaction the user would recognise"]
+  },
+  {
+    from:"IT Security Team <it-security@company-internal.com>",
+    subject:"[URGENT] Your account has been compromised — immediate action required",
+    body:`SECURITY ALERT
+
+Our monitoring systems have detected unusual login activity on your account from an unrecognised location (Moscow, Russia).
+
+Your account has been temporarily locked. To restore access, you must verify your identity within the next 30 minutes or your account will be permanently disabled.
+
+Click here to verify: [account-security-verify.net/restore]
+
+Do not share this link with anyone.
+
+IT Security Team`,
+    isPhishing:true,
+    trigger:"Fear + urgency + authority (psychological synergy)",
+    bias:"System 1 dominance + optimism bias reversal",
+    layer:"PVFSE Layer 1 + Layer 2",
+    explanation:"This is a sophisticated attack deploying three Cialdini principles simultaneously — fear (Moscow login), extreme urgency (30-minute window), and authority (IT Security Team). This 'psychological synergy' (Kaczan et al., 2025) substantially amplifies effectiveness. The 'do not share this link' instruction isolates the victim from social verification. The domain 'account-security-verify.net' is not a company domain.",
+    clues:["External domain — real IT teams always use your organisation's own domain","30-minute deadline is extreme urgency designed to prevent rational deliberation","'Do not share this link' instruction prevents you from seeking advice or verification","Geographic fear trigger (Moscow, Russia) is emotionally loaded and commonly used","No company branding, employee name, phone number, or helpdesk ticket reference"]
+  },
+  {
+    from:"Spotify <newsletter@spotify.com>",
+    subject:"Your Spotify Wrapped 2025 is here",
+    body:`Hi there,
+
+Your 2025 Wrapped is ready — see how your year in music stacked up.
+
+Top artist: The Weeknd
+Top genre: Pop / R&B
+Minutes listened: 18,420
+
+Tap to see your full Wrapped at spotify.com/wrapped
+
+Happy listening,
+The Spotify Team`,
+    isPhishing:false,
+    trigger:"None — legitimate email",
+    bias:"N/A",
+    layer:"N/A",
+    explanation:"This is a legitimate Spotify Wrapped notification. It uses the correct spotify.com domain throughout, contains personalised listening data, links directly to spotify.com, makes no requests for personal information, and creates no urgency. Legitimate service emails are personalised, use their own domain for all links, and never ask you to act under pressure.",
+    clues:["Correct domain: newsletter@spotify.com — official Spotify sending domain","Contains actual personalised listening data (artist, genre, minutes)","Link goes directly to spotify.com/wrapped — no third-party redirects","No urgency, no threats, no requests for any information or action","Expected annual communication — users anticipate Wrapped every year"]
+  },
+  {
+    from:"David Chen, CEO <ceo@globaltech-corp.com>",
+    subject:"Confidential — urgent wire transfer needed",
+    body:`Hi,
+
+I'm currently in a board meeting and unable to take calls. I need you to arrange an urgent wire transfer of £18,500 to a new supplier before close of business today.
+
+This is time-sensitive and confidential — please do not discuss with other colleagues until it is processed.
+
+I'll explain fully later. Please confirm when done.
+
+Best,
+David Chen
+CEO`,
+    isPhishing:true,
+    trigger:"Authority + urgency + enforced secrecy",
+    bias:"Authority bias + System 1 dominance",
+    layer:"PVFSE Layer 1 + Layer 2",
+    explanation:"This is a Business Email Compromise (BEC) attack — one of the most financially costly forms of social engineering. It exploits extreme authority bias (CEO instruction), urgency (end of business today), and enforced secrecy (do not discuss with colleagues) to prevent any verification. The instruction to keep it confidential eliminates the social checks — speaking to a colleague — that would reveal the fraud immediately.",
+    clues:["CEOs and executives rarely send direct financial instructions by personal email","'Do not discuss with colleagues' — the most important red flag: this eliminates verification","'I'll explain later' deliberately avoids scrutiny and bypasses normal approval processes","No invoice, supplier name, bank details, purchase order, or supporting documentation","End-of-day deadline creates artificial time pressure to act before thinking"]
+  },
+  {
+    from:"HMRC <support@gov.uk>",
+    subject:"Tax refund of £847.20 is pending — claim within 14 days",
+    body:`Dear taxpayer,
+
+Following a review of your 2024/25 tax return, HMRC has identified that you are entitled to a refund of £847.20.
+
+To receive your refund, please submit your bank details using the secure form below within 14 days. After this period the refund will expire.
+
+[Claim your refund — hmrc-refund-portal.co.uk]
+
+HMRC Customer Services`,
+    isPhishing:true,
+    trigger:"Scarcity + authority + reciprocity",
+    bias:"Optimism bias + authority bias",
+    layer:"PVFSE Layer 1 + Layer 2",
+    explanation:"This attack deploys Cialdini's scarcity principle (14-day expiry), authority (HMRC branding), and reciprocity (you are owed money — a reward framing that lowers guard). The domain 'hmrc-refund-portal.co.uk' is not hmrc.gov.uk — legitimate HMRC communications always use the gov.uk domain. HMRC never requests bank details by email because they already hold them from your tax records.",
+    clues:["Domain: 'hmrc-refund-portal.co.uk' — real HMRC only ever uses hmrc.gov.uk","HMRC never requests bank details by email — they process refunds to known accounts","Specific amount (£847.20) is designed to appear authentic but is chosen randomly","14-day expiry is a scarcity trigger creating false urgency around a reward","'Dear taxpayer' — real HMRC communications use your full name and Unique Taxpayer Reference"]
+  },
+  {
+    from:"LinkedIn <no-reply@linkedin.com>",
+    subject:"Sarah Mitchell viewed your profile",
+    body:`Hi,
+
+Sarah Mitchell, Talent Acquisition Manager at Deloitte, viewed your LinkedIn profile.
+
+See who else has viewed your profile this week:
+linkedin.com/in/notifications
+
+You have 3 new connection requests waiting.
+
+The LinkedIn Team`,
+    isPhishing:false,
+    trigger:"None — legitimate email",
+    bias:"N/A",
+    layer:"N/A",
+    explanation:"This is a legitimate LinkedIn notification. It uses the correct linkedin.com sending domain, all links go only to linkedin.com, the content is plausible and personalised (a named recruiter from a real company), and it requests no sensitive information or urgent action. This type of email does leverage the 'liking' principle — someone is interested in you — but as a legitimate engagement tool, not a malicious exploit.",
+    clues:["Correct domain: no-reply@linkedin.com — verified LinkedIn sending address","All links resolve to linkedin.com — no third-party domains","Named specific person with plausible job title — adds authenticity","No urgency, threats, requests for information, or suspicious attachments","Routine expected communication — LinkedIn regularly sends these notifications"]
+  }
+];
+
+let current = 0, score = 0, answers = [], missedBiases = {};
+let shuffledEmails = [];
+
+// ── PVFSE EXPLORER ───────────────────────────────────────────────────────
+const layerData = {
+  1: {
+    title: "Layer 1 — Attacker Techniques",
+    color: "#c45e3e",
+    bg: "#faeee9",
+    body: "Social engineering attacks deploy Cialdini's (2007) six principles of persuasion. Research by Bahman et al. (2024) found authority and social proof are the most effective, while scarcity is losing efficacy due to user desensitisation. Effective attacks often combine multiple principles simultaneously — what Kaczan et al. (2025) call 'psychological synergy'.",
+    items: ["Authority", "Social proof", "Urgency / fear", "Reciprocity", "Liking", "AI amplifier"]
+  },
+  2: {
+    title: "Layer 2 — Cognitive Biases & Mechanisms",
+    color: "#3c3489",
+    bg: "#eeedfe",
+    body: "Kahneman's (2011) dual process theory explains why aware users remain susceptible. Attacks activate System 1 (fast, automatic) and suppress System 2 (deliberate, analytical) — where security knowledge resides. Three specific biases amplify this: optimism bias ('it won't happen to me'), authority bias (automatic deference), and overconfidence bias (training-induced false confidence).",
+    items: ["System 1 dominance", "Optimism bias", "Authority bias", "Overconfidence bias"]
+  },
+  3: {
+    title: "Layer 3 — Susceptibility Outcomes",
+    color: "#c48a3e",
+    bg: "#faf3e0",
+    body: "Activated cognitive mechanisms produce three behavioural outcomes. Compliance and disclosure are widely documented in the literature. Rationalisation — post-hoc justification of the action — is less commonly treated as a distinct outcome but is critical: it reduces incident reporting and enables continued exploitation by the attacker (Cialdini, 2007).",
+    items: ["Compliance", "Disclosure", "Rationalisation"]
+  },
+  4: {
+    title: "Layer 4 — Evidence-Based Mitigations",
+    color: "#2d7d46",
+    bg: "#e4f5ea",
+    body: "Each mitigation targets a specific Layer 2 mechanism rather than delivering generic knowledge. Bias-aware training develops metacognitive awareness of personal vulnerability conditions (Morewedge et al., 2015). Friction interventions impose mandatory System 2 engagement at high-risk action points (Thaler & Sunstein, 2008). Contextual nudges deliver real-time, context-sensitive prompts (Sunstein, 2014).",
+    items: ["Bias-aware training", "Friction interventions", "Contextual nudges"]
+  }
+};
+
+let activeLayer = null;
+
+function showLayer(n) {
+  const d = layerData[n];
+  if (activeLayer === n) { closeLayer(); return; }
+  activeLayer = n;
+  // Reset pill states
+  [1,2,3,4].forEach(i => document.getElementById('lp-'+i).classList.remove('active-layer'));
+  document.getElementById('lp-'+n).classList.add('active-layer');
+  document.getElementById('ld-title').textContent = d.title;
+  document.getElementById('ld-title').style.color = d.color;
+  document.getElementById('ld-body').textContent = d.body;
+  const itemsEl = document.getElementById('ld-items');
+  itemsEl.innerHTML = d.items.map(it =>
+    `<span class="ld-tag" style="background:${d.bg};color:${d.color};border-color:${d.color}40">${it}</span>`
+  ).join('');
+  const detail = document.getElementById('layer-detail');
+  detail.style.borderColor = d.color + '60';
+  detail.style.display = 'block';
+  detail.style.animation = 'none';
+  detail.offsetHeight; // reflow
+  detail.style.animation = 'fadeUp 0.25s ease';
+}
+
+function closeLayer() {
+  activeLayer = null;
+  [1,2,3,4].forEach(i => document.getElementById('lp-'+i).classList.remove('active-layer'));
+  document.getElementById('layer-detail').style.display = 'none';
+}
+
+// ── SHUFFLE ──────────────────────────────────────────────────────────────
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startSim() {
+  shuffledEmails = shuffleArray(emails);
+  current = 0; score = 0; answers = []; missedBiases = {};
+  document.getElementById('screen-intro').classList.remove('active');
+  document.getElementById('screen-sim').classList.add('active');
+  closeLayer();
+  loadEmail();
+}
+
+function loadEmail() {
+  const e = shuffledEmails[current];
+  const pct = (current / 8) * 100;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('progress-counter').textContent = `Email ${current + 1} of 8`;
+  document.getElementById('score-num').textContent = score;
+  document.getElementById('unread-count').textContent = `${8 - current} unread`;
+  document.getElementById('em-from').textContent = e.from;
+  document.getElementById('em-subject').textContent = e.subject;
+  document.getElementById('em-body').innerHTML = e.body.replace(/\[([^\]]+)\]/g,
+    '<span class="email-link-span">$1</span>');
+  document.getElementById('decision-grid').style.display = 'grid';
+  document.getElementById('feedback-area').style.display = 'none';
+}
+
+function answer(guessedPhishing) {
+  const e = shuffledEmails[current];
+  const correct = guessedPhishing === e.isPhishing;
+  if (correct) score++;
+  else missedBiases[e.bias] = (missedBiases[e.bias] || 0) + 1;
+  answers.push({ email: e, correct });
+  showFeedback(e, correct);
+}
+
+function showFeedback(e, correct) {
+  document.getElementById('decision-grid').style.display = 'none';
+  document.getElementById('feedback-area').style.display = 'block';
+  const card = document.getElementById('feedback-card');
+  card.className = 'feedback-card ' + (correct ? 'correct' : 'wrong');
+  const vi = document.getElementById('vi');
+  vi.className = 'verdict-icon ' + (correct ? 'vi-correct' : 'vi-wrong');
+  vi.textContent = correct ? '✓' : '✗';
+  const vt = document.getElementById('vt');
+  vt.className = 'verdict-text ' + (correct ? 'vt-correct' : 'vt-wrong');
+  if (e.isPhishing) {
+    vt.textContent = correct ? 'Correct — this was a phishing attack' : 'Missed — this was a phishing attack';
+  } else {
+    vt.textContent = correct ? 'Correct — this was a legitimate email' : 'Incorrect — this was actually a legitimate email';
+  }
+  document.getElementById('fb-expl').textContent = e.explanation;
+  const ts = document.getElementById('tag-strip');
+  ts.innerHTML = '';
+  if (e.isPhishing) {
+    ts.innerHTML += `<span class="tag tag-tr">Trigger: ${e.trigger}</span>`;
+    ts.innerHTML += `<span class="tag tag-bi">Bias: ${e.bias}</span>`;
+    ts.innerHTML += `<span class="tag tag-la">${e.layer}</span>`;
+  }
+  document.getElementById('clue-list').innerHTML = e.clues
+    .map(c => `<div class="clue-item"><div class="clue-dot"></div><span>${c}</span></div>`).join('');
+  document.getElementById('next-btn-label').textContent = current < 7 ? 'Next email' : 'See my results';
+}
+
+function nextEmail() {
+  current++;
+  if (current >= 8) showResults();
+  else loadEmail();
+}
+
+function showResults() {
+  document.getElementById('screen-sim').classList.remove('active');
+  document.getElementById('screen-results').classList.add('active');
+  document.getElementById('prog-fill').style.width = '100%';
+
+  const pct = score / 8;
+  const offset = 314 - (314 * pct);
+  setTimeout(() => {
+    document.getElementById('ring-fill').style.strokeDashoffset = offset;
+    document.getElementById('ring-fill').style.transition = 'stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1)';
+  }, 100);
+  document.getElementById('ring-num').textContent = score;
+
+  const ratings = ['Keep practising', 'Keep practising', 'Developing awareness', 'Developing awareness',
+    'Average awareness', 'Good awareness', 'Strong awareness', 'Excellent result', 'Perfect score'];
+  const subs = ['Review the feedback carefully — each missed email reveals a specific cognitive vulnerability.',
+    'You missed several attacks. Focus on the cognitive triggers highlighted in the feedback.',
+    'You caught some attacks but remain vulnerable to specific trigger types.',
+    'You caught some attacks but remain vulnerable to specific trigger types.',
+    'Halfway there. Review which trigger types you struggled with most.',
+    'Good performance. One or two vulnerabilities remain — see your profile below.',
+    'Strong result. Minor vulnerabilities remain in specific trigger categories.',
+    'Excellent. You demonstrated strong awareness across almost all attack types.',
+    'Outstanding. You correctly identified every email in the simulation.'];
+  document.getElementById('results-title').textContent = ratings[score];
+  document.getElementById('results-sub').textContent = subs[score];
+
+  const biasColors = {
+    'System 1 dominance': '#185fa5',
+    'Authority bias + System 1 dominance': '#533ab7',
+    'System 1 dominance + optimism bias reversal': '#185fa5',
+    'Authority bias + System 1': '#533ab7',
+    'Optimism bias + authority bias': '#c48a3e',
+  };
+  const allBiases = {};
+  shuffledEmails.filter(e => e.isPhishing).forEach(e => {
+    allBiases[e.bias] = (allBiases[e.bias] || 0) + 1;
+  });
+  let biasHtml = '';
+  Object.entries(allBiases).forEach(([bias, total]) => {
+    const missed = missedBiases[bias] || 0;
+    const barPct = total > 0 ? Math.round((missed / total) * 100) : 0;
+    const col = biasColors[bias] || '#185fa5';
+    const label = bias.length > 32 ? bias.substring(0, 30) + '...' : bias;
+    biasHtml += `<div class="bias-row">
+      <span class="bias-name">${label}</span>
+      <div class="bias-bar-bg"><div class="bias-bar-fill" style="width:0%;background:${col}" data-target="${barPct}"></div></div>
+      <span class="bias-stat">${missed} / ${total} missed</span>
+    </div>`;
+  });
+  document.getElementById('bias-breakdown').innerHTML = biasHtml;
+  setTimeout(() => {
+    document.querySelectorAll('.bias-bar-fill').forEach(el => {
+      el.style.transition = 'width 0.8s cubic-bezier(0.4,0,0.2,1)';
+      el.style.width = el.dataset.target + '%';
+    });
+  }, 200);
+
+  const topMissed = Object.entries(missedBiases).sort((a, b) => b[1] - a[1])[0];
+  if (topMissed) {
+    document.getElementById('key-finding').style.display = 'block';
+    const findings = {
+      'System 1 dominance': 'You were most susceptible to urgency and time-pressure attacks. These exploit System 1 — your fast, automatic thinking — by creating threat conditions that bypass deliberate analysis. When an email makes you feel rushed, that sense of pressure is itself the attack mechanism.',
+      'Authority bias + System 1 dominance': 'Authority-based attacks combined with urgency were your biggest vulnerability. The combination of institutional authority and time pressure exploits both authority bias and System 1 dominance simultaneously — always verify unusual financial or security requests through a separate, known channel.',
+      'System 1 dominance + optimism bias reversal': 'Fear-based attacks that reverse optimism bias — making you feel specifically targeted — were your weakness. When an email makes you feel personally at risk, the emotional response bypasses rational evaluation. Treat any communication that triggers strong anxiety as a reason to slow down, not to act faster.',
+      'Optimism bias + authority bias': 'Government-impersonation attacks caught you out. These exploit both authority bias and a reward framing (you are owed money) that lowers your guard. HMRC and government bodies never request bank details by email — always verify through gov.uk directly.',
+      'Authority bias + System 1': 'Authority-based attacks were your main vulnerability. Authority bias causes automatic trust in institutional figures and is the hardest Cialdini principle to resist. Always verify unusual requests — especially financial ones — through a separate, independently verified contact channel.',
+    };
+    document.getElementById('kf-text').textContent = findings[topMissed[0]] ||
+      'Review the emails you missed and note which psychological triggers were used. Awareness of your specific cognitive vulnerabilities is the first step towards meaningful protection.';
+  }
+
+  let reviewHtml = '';
+  answers.forEach((a) => {
+    reviewHtml += `<div class="review-item">
+      <div class="ri-icon ${a.correct ? 'ri-c' : 'ri-w'}">${a.correct ? '✓' : '✗'}</div>
+      <div>
+        <div class="ri-subject">${a.email.subject}</div>
+        <div class="ri-meta">${a.email.isPhishing ? `Phishing · ${a.email.trigger}` : 'Legitimate email'} · ${a.correct ? 'Identified correctly' : 'Missed'}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('review-list').innerHTML = reviewHtml;
+}
+
+function restart() {
+  current = 0; score = 0; answers = []; missedBiases = {};
+  shuffledEmails = [];
+  document.getElementById('screen-results').classList.remove('active');
+  document.getElementById('screen-intro').classList.add('active');
+}
+</script>
+</body>
+</html>
